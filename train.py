@@ -9,11 +9,10 @@ train_losses = []
 val_losses = []
 
 
-def train(epochs, model, criterion, lr_scheduler, optimizer):
+def train(epochs, model, criterion, lr_scheduler, optimizer, device):
 
     best_val = 2
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.train()
     model = model.to(device)
     tr_loss = 0
@@ -68,6 +67,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer):
     plt.show()
 
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 epochs = 10
 
 input_size = 8
