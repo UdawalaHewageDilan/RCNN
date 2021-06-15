@@ -49,10 +49,10 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
         val_loss = 0
         with torch.no_grad():
             for x, y in dh.test_loader:
-                output = model(x.cuda())
+                output = model(x.to(device))
                 # output = torch.reshape(output,(output.shape[0],))
                 # print(output.shape)
-                loss_val = criterion(output, y.cuda())
+                loss_val = criterion(output, y.to(device))
                 val_loss += loss_val.item()
 
         val_loss = val_loss / x.shape[0]
