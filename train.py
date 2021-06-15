@@ -3,37 +3,70 @@ from torch.nn import CrossEntropyLoss, NLLLoss
 from torch.optim import lr_scheduler, Adam, SGD
 from rcnn_model import RCNN
 import data_handler as dh
+import matplotlib.pyplot as plt
+
+train_losses = []
+val_losses = []
 
 
 def train(epochs, model, criterion, lr_scheduler, optimizer):
+
+    best_val = 2
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.train()
     model = model.to(device)
+    tr_loss = 0
 
     for epoch in range(epochs):
+        print(epoch, lr)
         for i, (images, labels) in enumerate(dh.train_loader):
             images = images.to(device)
             labels = labels.to(device)
 
-            labels = labels.type(torch.FloatTensor).view(-1)
-            print(labels.shape)
-            print(labels)
+            labels = labels
+            # print(labels.shape)
+            # print(labels)
 
             output = model(images)
-            print(output)
-            print(output.shape)
-            loss = criterion(labels, output)
+            # print(output)
+            # print(output.shape)
+            loss_train = criterion(output, labels)
 
             optimizer.zero_grad()
-            loss.backward()
+            loss_train.backward()
             optimizer.step()
+            tr_loss += loss_train.item()
+            if i % 10 == 0:
+                print(loss_train)
 
-            if (i + 1) % 100 == 0:
-                print(f'Epoch [{epoch + 1}/{epochs}], Step [{i + 1}], Loss: {loss.item():.4f}')
+        print(f'Epoch [{epoch + 1}/{epochs}] Loss: {loss_train.item():.4f}')
         lr_scheduler.step()
+        train_losses.append(tr_loss / images.shape[0])
+
+        val_loss = 0
+        with torch.no_grad():
+            for x, y in dh.test_loader:
+                output = model(x.cuda())
+                # output = torch.reshape(output,(output.shape[0],))
+                # print(output.shape)
+                loss_val = criterion(output, y.cuda())
+                val_loss += loss_val.item()
+
+        val_loss = val_loss / x.shape[0]
+        val_losses.append(val_loss)
+        print('Epoch : ', epoch, "\t Train loss: ", tr_loss / images.shape[0], "\t Validation loss: ", val_loss)
+
+        if val_loss < best_val:
+            best_val = val_loss
+            torch.save(model, "./models/Best_model2.pth")
+
+    plt.plot(train_losses)
+    plt.plot(val_losses)
+    plt.show()
 
 
-epochs = 4
+epochs = 10
 
 input_size = 8
 hidden_size = 64
