@@ -12,15 +12,16 @@ val_losses = []
 def train(epochs, model, criterion, lr_scheduler, optimizer, device):
 
     best_val = 2
-
-    model.train()
     model = model.to(device)
+    #model.train()
     tr_loss = 0
     criterion = criterion.to(device)
 
     for epoch in range(epochs):
+
         print(epoch, lr)
         for i, (images, labels) in enumerate(dh.train_loader):
+            model = model.to(device)
             images = images.to(device)
             labels = labels.to(device)
 
