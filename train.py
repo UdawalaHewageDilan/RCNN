@@ -54,7 +54,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
                 output = model(x.to(device))
                 # output = torch.reshape(output,(output.shape[0],))
                 # print(output.shape)
-                loss_val = criterion(output, y.to(device))
+                loss_val = criterion(output.to(device), y.to(device))
                 val_loss += loss_val.item()
 
         val_loss = val_loss / x.shape[0]
