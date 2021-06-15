@@ -16,8 +16,8 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
     #model.train()
     tr_loss = 0
     criterion = criterion.to(device)
-    lr_scheduler = lr_scheduler.to(device)
-    optimizer = optimizer.to(device)
+    # lr_scheduler = lr_scheduler.to(device)
+    # optimizer = optimizer.to(device)
 
     for epoch in range(epochs):
 
