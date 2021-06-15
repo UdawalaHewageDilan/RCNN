@@ -84,7 +84,7 @@ optimizer = Adam(model.parameters(), lr)
 
 lr_scheduler = lr_scheduler.StepLR(optimizer, 1)
 
-train(epochs, model, criterion, lr_scheduler, optimizer)
+train(epochs, model, criterion, lr_scheduler, optimizer, device)
 
 
 
