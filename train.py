@@ -1,5 +1,5 @@
 import torch
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, NLLLoss
 from torch.optim import lr_scheduler, Adam, SGD
 from rcnn_model import RCNN
 import data_handler as dh
@@ -14,8 +14,10 @@ def train(epochs, model, criterion, lr_scheduler, optimizer):
         for i, (images, labels) in enumerate(dh.train_loader):
             images = images.to(device)
             labels = labels.to(device)
-            print(labels)
+
+            labels = labels.type(torch.FloatTensor).view(-1)
             print(labels.shape)
+            print(labels)
 
             output = model(images)
             print(output)
@@ -30,16 +32,17 @@ def train(epochs, model, criterion, lr_scheduler, optimizer):
                 print(f'Epoch [{epoch + 1}/{epochs}], Step [{i + 1}], Loss: {loss.item():.4f}')
         lr_scheduler.step()
 
+
 epochs = 4
 
-input_size = 256
-hidden_size = 256
-num_layers = 2
+input_size = 8
+hidden_size = 64
+num_layers = 1
 num_classes = 2
 
 model = RCNN(input_size, hidden_size, num_layers, num_classes)
 
-criterion = CrossEntropyLoss()
+criterion = NLLLoss()
 
 lr = 0.01
 optimizer = Adam(model.parameters(), lr)
