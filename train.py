@@ -17,6 +17,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer):
     model.train()
     model = model.to(device)
     tr_loss = 0
+    criterion = criterion.to(device)
 
     for epoch in range(epochs):
         print(epoch, lr)
@@ -31,6 +32,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer):
             output = model(images)
             # print(output)
             # print(output.shape)
+
             loss_train = criterion(output, labels)
 
             optimizer.zero_grad()
