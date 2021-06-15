@@ -29,6 +29,7 @@ class RCNN(nn.Module):
         x = self.pool2(F.relu(self.conv2(x)))
 
         x = x.view(-1, x.size(0), self.hidden_size)
+        x = x.permute(0, 2, 1)
 
         out, _ = self.gru(x, h0)
         out = F.relu(out)
