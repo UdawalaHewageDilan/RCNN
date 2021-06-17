@@ -45,7 +45,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
                 print(loss_train)
         if epoch % 2 == 0:
             print(f'Epoch [{epoch + 1}/{epochs}] Loss: {loss_train.item():.4f}')
-        lr_scheduler.step()
+
         train_losses.append(tr_loss / images.shape[0])
 
         val_loss = 0
@@ -56,6 +56,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
                 # print(output.shape)
                 loss_val = criterion(output.to(device), y.to(device))
                 val_loss += loss_val.item()
+        lr_scheduler.step(metrics=loss_val)
 
         val_loss = val_loss / x.shape[0]
         val_losses.append(val_loss)
@@ -86,7 +87,7 @@ criterion = NLLLoss()
 lr = 0.01
 optimizer = Adam(model.parameters(), lr)
 
-lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, verbose=True)
+lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, verbose=True )
 
 train(epochs, model, criterion, lr_scheduler, optimizer, device)
 
