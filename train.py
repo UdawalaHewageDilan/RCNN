@@ -83,7 +83,7 @@ model = RCNN(input_size, hidden_size, num_layers, num_classes)
 
 criterion = NLLLoss()
 
-lr = 0.1
+lr = 0.01
 optimizer = Adam(model.parameters(), lr)
 
 lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, verbose=True)
