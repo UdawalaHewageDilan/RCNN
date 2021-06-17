@@ -43,8 +43,8 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
             tr_loss += loss_train.item()
             if i % 10 == 0:
                 print(loss_train)
-
-        print(f'Epoch [{epoch + 1}/{epochs}] Loss: {loss_train.item():.4f}')
+        if epoch % 2 == 0:
+            print(f'Epoch [{epoch + 1}/{epochs}] Loss: {loss_train.item():.4f}')
         lr_scheduler.step()
         train_losses.append(tr_loss / images.shape[0])
 
@@ -59,6 +59,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
 
         val_loss = val_loss / x.shape[0]
         val_losses.append(val_loss)
+
         print('Epoch : ', epoch, "\t Train loss: ", tr_loss / images.shape[0], "\t Validation loss: ", val_loss)
 
         if val_loss < best_val:
@@ -67,7 +68,7 @@ def train(epochs, model, criterion, lr_scheduler, optimizer, device):
 
     plt.plot(train_losses)
     plt.plot(val_losses)
-    plt.show()
+    plt.savefig('train_val.png')
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -82,10 +83,10 @@ model = RCNN(input_size, hidden_size, num_layers, num_classes)
 
 criterion = NLLLoss()
 
-lr = 0.01
+lr = 0.1
 optimizer = Adam(model.parameters(), lr)
 
-lr_scheduler = lr_scheduler.StepLR(optimizer, 1)
+lr_scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=2, verbose=True)
 
 train(epochs, model, criterion, lr_scheduler, optimizer, device)
 
